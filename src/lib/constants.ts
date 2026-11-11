@@ -20,20 +20,17 @@ export const FOOTER_LINKS = {
   company: [
     { href: '/about', label: 'About Us' },
     { href: '/trainers', label: 'Our Trainers' },
-    { href: '/careers', label: 'Careers' },
-    { href: '/blog', label: 'Blog' },
+    { href: '/facilities', label: 'Facilities' },
   ],
   support: [
     { href: '/contact', label: 'Contact Us' },
-    { href: '/faq', label: 'FAQ' },
-    { href: '/privacy', label: 'Privacy Policy' },
-    { href: '/terms', label: 'Terms of Service' },
+    { href: '/membership-plans', label: 'Membership Plans' },
+    { href: '/gallery', label: 'Gallery' },
   ],
   programs: [
     { href: '/programs', label: 'All Programs' },
-    { href: '/personal-training', label: 'Personal Training' },
-    { href: '/group-classes', label: 'Group Classes' },
-    { href: '/nutrition', label: 'Nutrition Coaching' },
+    { href: '/facilities', label: 'Facilities' },
+    { href: '/contact', label: 'Ask a Question' },
   ],
   contact: {
     address: '123 Fitness Street, Health City, HC 12345',

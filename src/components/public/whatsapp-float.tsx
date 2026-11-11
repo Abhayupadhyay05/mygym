@@ -54,7 +54,7 @@ export function WhatsAppFloat() {
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Have questions about memberships, trainers, or facilities? We're here to help!
+              Have questions about memberships, trainers, or facilities? We&apos;re here to help!
             </p>
             <a
               href={WHATSAPP_URL}

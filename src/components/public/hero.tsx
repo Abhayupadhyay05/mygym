@@ -137,7 +137,6 @@ export function Hero() {
               className="relative"
             >
               <div className="relative aspect-[4/3] lg:aspect-[3/2] rounded-3xl overflow-hidden glass-dark">
-                {/* Hero Image Placeholder */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A]" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Dumbbell className="h-32 w-32" style={{ color: '#00FF87' }} opacity={0.1} aria-hidden="true" />

@@ -1,14 +1,14 @@
 import Link from 'next/link'
-import { Dumbbell, Instagram, Facebook, Twitter, Youtube } from 'lucide-react'
+import { Dumbbell, Globe } from 'lucide-react'
 import { GYM_NAME, COPYRIGHT_YEAR, FOOTER_LINKS, SOCIAL_LINKS, ACCENT_COLOR } from '@/lib/constants'
 
 export function Footer() {
   const socialIcons = {
-    instagram: Instagram,
-    facebook: Facebook,
-    twitter: Twitter,
-    youtube: Youtube,
-  }
+  instagram: Globe,
+  facebook: Globe,
+  twitter: Globe,
+  youtube: Globe,
+}
 
   return (
     <footer className="bg-[#0A0A0A] border-t border-white/10">
