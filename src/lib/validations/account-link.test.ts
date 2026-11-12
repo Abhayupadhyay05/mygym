@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { memberAccountLinkSchema } from './account-link'
+import { memberAccountLinkResultSchema, memberAccountLinkSchema } from './account-link'
 
 describe('memberAccountLinkSchema', () => {
   it('accepts existing member and profile UUIDs', () => {
@@ -14,5 +14,10 @@ describe('memberAccountLinkSchema', () => {
       memberId: 'member',
       profileId: 'profile',
     }).success).toBe(false)
+  })
+
+  it('accepts a returned member UUID from the linking RPC', () => {
+    expect(memberAccountLinkResultSchema.safeParse('550e8400-e29b-41d4-a716-446655440000').success).toBe(true)
+    expect(memberAccountLinkResultSchema.safeParse('member').success).toBe(false)
   })
 })

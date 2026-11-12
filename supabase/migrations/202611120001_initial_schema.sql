@@ -999,6 +999,46 @@ begin
 end;
 $$;
 
+create function public.link_member_account(target_member_id uuid, target_profile_id uuid)
+returns uuid
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  linked_member_id uuid;
+begin
+  if public.current_app_role() is distinct from 'OWNER'::public.app_role then
+    raise exception 'Forbidden' using errcode = '42501';
+  end if;
+  if target_member_id is null or target_profile_id is null then
+    raise exception 'Member and profile are required' using errcode = '22023';
+  end if;
+
+  perform 1
+  from public.profiles profile
+  where profile.id = target_profile_id
+    and profile.role = 'MEMBER'
+    and profile.is_active = true
+  for update;
+  if not found then
+    raise exception 'Active MEMBER profile not found' using errcode = 'P0002';
+  end if;
+
+  update public.members
+  set profile_id = target_profile_id
+  where id = target_member_id
+    and profile_id is null
+    and status = 'ACTIVE'
+  returning id into linked_member_id;
+  if not found then
+    raise exception 'Unlinked active member not found' using errcode = 'P0002';
+  end if;
+
+  return linked_member_id;
+end;
+$$;
+
 create trigger auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_auth_user();
@@ -1241,8 +1281,8 @@ grant update (full_name, phone, avatar_url) on public.profiles to authenticated;
 revoke update (role, is_active, id) on public.profiles from authenticated;
 
 grant select on public.members to authenticated;
-grant insert (profile_id, member_number, full_name, email, phone, date_of_birth, emergency_contact_name, emergency_contact_phone, address, status, notes, created_by) on public.members to authenticated;
-grant update (profile_id, member_number, full_name, email, phone, date_of_birth, emergency_contact_name, emergency_contact_phone, address, status, notes) on public.members to authenticated;
+grant insert (member_number, full_name, email, phone, date_of_birth, emergency_contact_name, emergency_contact_phone, address, status, notes, created_by) on public.members to authenticated;
+grant update (member_number, full_name, email, phone, date_of_birth, emergency_contact_name, emergency_contact_phone, address, status, notes) on public.members to authenticated;
 grant select on public.membership_plans to anon, authenticated;
 grant insert (name, description, duration_days, duration_months, price, is_active, created_by) on public.membership_plans to authenticated;
 grant update (name, description, duration_days, duration_months, price, is_active) on public.membership_plans to authenticated;
@@ -1291,3 +1331,5 @@ revoke all on function public.admin_monthly_report(integer) from public, anon;
 grant execute on function public.admin_monthly_report(integer) to authenticated;
 revoke all on function public.set_profile_role(uuid, public.app_role) from public, anon, authenticated;
 grant execute on function public.set_profile_role(uuid, public.app_role) to authenticated;
+revoke all on function public.link_member_account(uuid, uuid) from public, anon, authenticated;
+grant execute on function public.link_member_account(uuid, uuid) to authenticated;

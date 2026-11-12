@@ -13,13 +13,27 @@ Next.js App Router application for the public gym website and authenticated admi
 
 ## Supabase setup
 
-The initial schema and RLS migration is `supabase/migrations/202611120001_initial_schema.sql`. Review it and apply it to a non-production project before testing the portals. The migration has not yet been applied to a database.
+1. Create a Supabase project and put its project URL and anon/publishable key in `.env.local` as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+2. In the Supabase dashboard, open **SQL Editor**, paste the complete contents of `supabase/migrations/202611120001_initial_schema.sql`, and run it once against the new, non-production project. This migration has not yet been applied or tested against a database.
+3. In **Authentication → URL Configuration**, add `http://localhost:3000/auth/callback` as a redirect URL. Enable email/password. Google OAuth and phone OTP need their provider credentials/settings in Supabase Auth.
+4. Run `npm run dev`, open `http://localhost:3000/register`, and create the owner account.
+5. In SQL Editor, replace the UUID below with the ID of that exact Auth user and run the statement. Confirm that one row returns with the expected name and `OWNER` role:
 
-Configure Supabase Auth redirect URLs to include `http://localhost:3000/auth/callback`. Enable email/password. Google OAuth requires provider credentials in Supabase Auth; phone OTP requires a configured SMS provider. These provider credentials are not stored in browser code.
+   ```sql
+   update public.profiles
+   set role = 'OWNER'
+   where id = 'AUTH_USER_UUID'::uuid
+     and role = 'MEMBER'
+   returning id, full_name, role;
+   ```
 
-New Auth users receive a `profiles` row with the `MEMBER` role. After creating the first owner account, a trusted operator must promote its verified profile to `OWNER` from the Supabase SQL editor using the confirmed Auth user UUID. Do not expose a self-service owner-registration flow.
+6. Sign in at `/login`. The owner can link an existing active `MEMBER` Auth account to an unlinked active gym-member record from the member details screen. An owner-only database function enforces the link; ordinary staff cannot change `members.profile_id`.
 
-An owner can link an existing active `MEMBER` Auth account to an unlinked gym member record from the member details screen. The member portal reads the linked member's own profile and payment history; paid records have a printable receipt. Database RLS and server-side role checks must be verified against staging before these flows are used with real members.
+New Auth users receive a `profiles` row with the `MEMBER` role. Do not create a self-service owner-registration flow. The member portal reads only the linked member's profile and payment history; paid records have a printable receipt. Verify RLS and role boundaries against staging before using real member data.
+
+## Gym content
+
+Public gym name, tagline, description, address, phone, email, hours, WhatsApp number, and social links are grouped in `src/lib/constants.ts`. These values are samples and need owner approval before launch. Trainer cards, testimonials, facilities, photos, and public plan details also contain sample content; replace or approve them rather than treating them as real claims. Admin membership plans are managed from the Plans screen.
 
 ## Razorpay payments
 

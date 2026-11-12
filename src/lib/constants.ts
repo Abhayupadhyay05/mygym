@@ -1,3 +1,4 @@
+/** Sample business details; replace with owner-approved values before launch. */
 export const GYM_NAME = 'Premium Fitness Gym'
 export const COPYRIGHT_YEAR = 2026
 export const GYM_TAGLINE = 'Where Strength Meets Excellence'
