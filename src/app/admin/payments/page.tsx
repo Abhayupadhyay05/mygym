@@ -5,6 +5,7 @@ import { paymentListItemSchema, pendingMembershipPaymentSchema } from '@/lib/val
 import { ManualPaymentForm } from './manual-payment-form'
 
 export const metadata: Metadata = { title: 'Payments' }
+export const instant = false
 
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 })
 const dateFormatter = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeZone: 'UTC' })

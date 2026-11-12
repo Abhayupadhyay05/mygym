@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Plus, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
   Table,
@@ -70,10 +70,10 @@ export default async function MembersPage({ searchParams }: { searchParams: Prom
           <h1 className="mt-2 text-3xl font-bold text-foreground">Members</h1>
           <p className="mt-2 text-muted-foreground">{result.data.total_count.toLocaleString('en-IN')} member records</p>
         </div>
-        <Button render={<Link href="/admin/members/new" />}>
+        <Link className={buttonVariants()} href="/admin/members/new">
           <Plus aria-hidden="true" />
           Add member
-        </Button>
+        </Link>
       </div>
 
       <form method="get" className="grid gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:grid-cols-[1fr_180px_auto]">
@@ -123,9 +123,9 @@ export default async function MembersPage({ searchParams }: { searchParams: Prom
                   </TableCell>
                   <TableCell>{dateFormatter.format(new Date(member.joined_at))}</TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm" render={<Link href={`/admin/members/${member.id}/edit`} />}>
+                    <Link className={buttonVariants({ variant: 'outline', size: 'sm' })} href={`/admin/members/${member.id}/edit`}>
                       View / edit
-                    </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
@@ -137,12 +137,24 @@ export default async function MembersPage({ searchParams }: { searchParams: Prom
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
         <span>Page {page} of {totalPages}</span>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled={page <= 1} render={<Link href={pageHref(Math.max(1, page - 1))} />}>
-            Previous
-          </Button>
-          <Button variant="outline" size="sm" disabled={page >= totalPages} render={<Link href={pageHref(Math.min(totalPages, page + 1))} />}>
-            Next
-          </Button>
+          {page <= 1 ? (
+            <span className={buttonVariants({ variant: 'outline', size: 'sm', className: 'pointer-events-none opacity-50' })} aria-disabled="true">
+              Previous
+            </span>
+          ) : (
+            <Link className={buttonVariants({ variant: 'outline', size: 'sm' })} href={pageHref(page - 1)}>
+              Previous
+            </Link>
+          )}
+          {page >= totalPages ? (
+            <span className={buttonVariants({ variant: 'outline', size: 'sm', className: 'pointer-events-none opacity-50' })} aria-disabled="true">
+              Next
+            </span>
+          ) : (
+            <Link className={buttonVariants({ variant: 'outline', size: 'sm' })} href={pageHref(page + 1)}>
+              Next
+            </Link>
+          )}
         </div>
       </div>
     </div>

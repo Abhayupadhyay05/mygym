@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useActionState, useRef } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { recordManualPaymentAction, type ManualPaymentActionState } from './actions'
 
@@ -36,9 +36,9 @@ export function ManualPaymentForm({ membershipId }: { membershipId: string }) {
         {isPending ? 'Recording…' : 'Record payment'}
       </Button>
       {state.status === 'success' && state.paymentId && (
-        <Button type="button" size="sm" variant="outline" render={<Link href={`/admin/payments/${state.paymentId}/receipt`} />}>
+        <Link className={buttonVariants({ variant: 'outline', size: 'sm' })} href={`/admin/payments/${state.paymentId}/receipt`}>
           View receipt
-        </Button>
+        </Link>
       )}
       {state.message && (
         <p className={state.status === 'success' ? 'w-full text-sm text-[#00FF87]' : 'w-full text-sm text-red-400'} role="status">{state.message}</p>

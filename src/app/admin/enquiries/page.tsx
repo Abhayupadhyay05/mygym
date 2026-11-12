@@ -5,6 +5,7 @@ import { EnquiryForm } from './enquiry-form'
 import { EnquiryUpdateForm } from './enquiry-update-form'
 
 export const metadata: Metadata = { title: 'Enquiries' }
+export const instant = false
 
 const dateTimeFormatter = new Intl.DateTimeFormat('en-IN', {
   dateStyle: 'medium',

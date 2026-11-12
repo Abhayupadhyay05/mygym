@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -87,7 +87,7 @@ export function MemberForm({ member }: { member?: MemberFormValues }) {
       )}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={isPending}>{isPending ? 'Saving…' : 'Save member'}</Button>
-        <Button type="button" variant="outline" render={<Link href="/admin/members" />}>Cancel</Button>
+        <Link className={buttonVariants({ variant: 'outline' })} href="/admin/members">Cancel</Link>
       </div>
     </form>
   )

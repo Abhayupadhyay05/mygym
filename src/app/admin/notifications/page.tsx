@@ -4,6 +4,7 @@ import { notificationSchema } from '@/lib/validations/notification'
 import { NotificationForm } from './notification-form'
 
 export const metadata: Metadata = { title: 'Notifications' }
+export const instant = false
 
 const dateTimeFormatter = new Intl.DateTimeFormat('en-IN', {
   dateStyle: 'medium',

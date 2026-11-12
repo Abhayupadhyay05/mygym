@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { requireRole } from '@/lib/auth/authorization'
 import { membershipListItemSchema, membershipPlanSchema } from '@/lib/validations/membership'
 import { AssignMembershipForm } from './assign-membership-form'
 
 export const metadata: Metadata = { title: 'Memberships' }
+export const instant = false
 
 export type MembershipPlan = {
   id: string
@@ -75,7 +76,7 @@ export default async function MembershipsPage() {
           <h1 className="mt-2 text-3xl font-bold">Memberships</h1>
           <p className="mt-2 text-muted-foreground">Assign plans and review recent membership periods.</p>
         </div>
-        <Button variant="outline" render={<Link href="/admin/membership-plans" />}>Manage plans</Button>
+        <Link className={buttonVariants({ variant: 'outline' })} href="/admin/membership-plans">Manage plans</Link>
       </div>
 
       <section className="max-w-2xl rounded-xl border border-white/10 bg-white/[0.03] p-5 sm:p-7" aria-labelledby="assign-membership">

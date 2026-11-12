@@ -4,6 +4,7 @@ import { attendanceRecordSchema } from '@/lib/validations/attendance'
 import { AttendanceCheckInForm } from './check-in-form'
 
 export const metadata: Metadata = { title: 'Attendance' }
+export const instant = false
 
 const dateFormatter = new Intl.DateTimeFormat('en-IN', {
   dateStyle: 'medium',

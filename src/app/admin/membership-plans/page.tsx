@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { requireRole } from '@/lib/auth/authorization'
 import { membershipPlanSchema } from '@/lib/validations/membership'
 
 export const metadata: Metadata = { title: 'Membership Plans' }
+export const instant = false
 
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 })
 
@@ -40,10 +41,10 @@ export default async function MembershipPlansPage() {
           <h1 className="mt-2 text-3xl font-bold">Membership plans</h1>
           <p className="mt-2 text-muted-foreground">Manage prices and calendar-based plan durations.</p>
         </div>
-        <Button render={<Link href="/admin/membership-plans/new" />}>
+        <Link className={buttonVariants()} href="/admin/membership-plans/new">
           <Plus aria-hidden="true" />
           Add plan
-        </Button>
+        </Link>
       </div>
       {parsedPlans.data.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-8 text-center">
@@ -63,9 +64,12 @@ export default async function MembershipPlansPage() {
               <p className="mt-3 text-2xl font-bold">{currency.format(plan.price)}</p>
               <p className="mt-1 text-sm text-muted-foreground">{durationLabel(plan)}</p>
               {plan.description && <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{plan.description}</p>}
-              <Button className="mt-5" variant="outline" size="sm" render={<Link href={`/admin/membership-plans/${plan.id}/edit`} />}>
+              <Link
+                className={buttonVariants({ className: 'mt-5', variant: 'outline', size: 'sm' })}
+                href={`/admin/membership-plans/${plan.id}/edit`}
+              >
                 Edit plan
-              </Button>
+              </Link>
             </article>
           ))}
         </section>

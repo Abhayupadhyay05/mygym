@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { requireRole } from '@/lib/auth/authorization'
 import { trainerAssignmentSchema, trainerSchema } from '@/lib/validations/trainer'
 import { AssignTrainerForm } from './assign-trainer-form'
 import { EndTrainerAssignmentForm, TrainerStatusForm } from './trainer-actions'
 
 export const metadata: Metadata = { title: 'Trainers' }
+export const instant = false
 
 export default async function TrainersPage() {
   const { supabase } = await requireRole(['OWNER', 'RECEPTIONIST'])
@@ -43,7 +44,7 @@ export default async function TrainersPage() {
           <h1 className="mt-2 text-3xl font-bold">Trainers</h1>
           <p className="mt-2 text-muted-foreground">Manage trainer profiles and member assignments.</p>
         </div>
-        <Button render={<Link href="/admin/trainers/new" />}>Add trainer</Button>
+        <Link className={buttonVariants()} href="/admin/trainers/new">Add trainer</Link>
       </div>
 
       <section className="space-y-4" aria-labelledby="trainer-list">
@@ -68,7 +69,12 @@ export default async function TrainersPage() {
                     {trainer.bio && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{trainer.bio}</p>}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" render={<Link href={`/admin/trainers/${trainer.id}/edit`} />}>Edit</Button>
+                    <Link
+                      className={buttonVariants({ variant: 'outline', size: 'sm' })}
+                      href={`/admin/trainers/${trainer.id}/edit`}
+                    >
+                      Edit
+                    </Link>
                     <TrainerStatusForm trainerId={trainer.id} isActive={trainer.is_active} />
                   </div>
                 </div>

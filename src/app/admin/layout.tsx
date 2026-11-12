@@ -1,11 +1,27 @@
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { Activity, CreditCard, Dumbbell, ReceiptText, UserRoundCog, Users } from 'lucide-react'
 import { SignOutButton } from '@/components/shared/sign-out-button'
 import { requireRole } from '@/lib/auth/authorization'
 
-export const instant = false
+export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-background">
+          <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8" aria-busy="true">
+            <p className="sr-only" role="status">Loading admin workspace</p>
+            <div className="h-8 w-48 animate-pulse rounded-lg bg-white/5" />
+          </main>
+        </div>
+      }
+    >
+      <AuthorizedAdminLayout>{children}</AuthorizedAdminLayout>
+    </Suspense>
+  )
+}
 
-export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+async function AuthorizedAdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const { profile } = await requireRole(['OWNER', 'RECEPTIONIST'])
 
   return (
