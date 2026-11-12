@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Premium Fitness Gym Management System
 
-## Getting Started
+Next.js App Router application for the public gym website and authenticated admin, trainer, and member portals.
 
-First, run the development server:
+## Local development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Install dependencies with `npm install`.
+2. Copy `.env.example` to `.env.local` if the local env file does not exist.
+3. Add a Supabase project URL and public anon/publishable key to `.env.local`.
+4. Run `npm run dev`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` is ignored by Git. Never commit service-role, payment, email, or WhatsApp credentials. The Supabase service-role client is server-only and is used only for protected Razorpay order registration and verified payment settlement/webhook processing; it is never used in browser code.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supabase setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The initial schema and RLS migration is `supabase/migrations/202611120001_initial_schema.sql`. Review it and apply it to a non-production project before testing the portals. The migration has not yet been applied to a database.
 
-## Learn More
+Configure Supabase Auth redirect URLs to include `http://localhost:3000/auth/callback`. Enable email/password. Google OAuth requires provider credentials in Supabase Auth; phone OTP requires a configured SMS provider. These provider credentials are not stored in browser code.
 
-To learn more about Next.js, take a look at the following resources:
+New Auth users receive a `profiles` row with the `MEMBER` role. After creating the first owner account, a trusted operator must promote its verified profile to `OWNER` from the Supabase SQL editor using the confirmed Auth user UUID. Do not expose a self-service owner-registration flow.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+An owner can link an existing active `MEMBER` Auth account to an unlinked gym member record from the member details screen. The member portal reads the linked member's own profile and payment history; paid records have a printable receipt. Database RLS and server-side role checks must be verified against staging before these flows are used with real members.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Razorpay payments
 
-## Deploy on Vercel
+The member portal can create Razorpay orders server-side, verify checkout signatures and captured payment details, and activate memberships through an atomic database function. The `/api/webhooks/razorpay` endpoint verifies webhook signatures and deduplicates captured-payment events.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Set `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, and `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. Configure the Razorpay webhook URL as `https://<your-app-host>/api/webhooks/razorpay` and subscribe to `payment.captured`. Do not enable online payments until the migration is applied and the webhook is configured in a test/staging project. When these variables are missing, the member portal shows that online payment is unavailable; manual staff payments remain available.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Resend and WhatsApp credentials are present in the environment template, but those delivery integrations are not implemented. Email/password, Google, and phone authentication depend on Supabase Auth provider configuration; they have not been live-tested because no Supabase project credentials are configured.
+
+## Validation
+
+- `npm run lint`
+- `npm test`
+- `npx tsc --noEmit`
+- `npm run build`
+
+Live authentication, RLS policies, database functions, Razorpay orders, and webhooks require a configured Supabase project and must be tested in staging before production use. No migration has been applied and no production deployment has been performed.
