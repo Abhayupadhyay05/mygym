@@ -2,6 +2,8 @@ import { Activity, CalendarClock, IndianRupee, UserCheck, Users, UserX } from 'l
 import { requireRole } from '@/lib/auth/authorization'
 import { adminDashboardSummarySchema } from '@/lib/validations/dashboard'
 
+export const instant = false
+
 const currency = new Intl.NumberFormat('en-IN', {
   style: 'currency',
   currency: 'INR',

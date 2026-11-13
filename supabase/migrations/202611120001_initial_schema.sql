@@ -1082,17 +1082,29 @@ alter table public.audit_logs enable row level security;
 
 create policy "Profiles are visible to self and owners"
   on public.profiles for select to authenticated
-  using (id = (select auth.uid()) or (select public.current_app_role()) = 'OWNER');
+  using (
+    (id = (select auth.uid()) and (select public.current_app_role()) is not null)
+    or (select public.current_app_role()) = 'OWNER'
+  );
 create policy "Users may update their own profile"
   on public.profiles for update to authenticated
-  using (id = (select auth.uid()) or (select public.current_app_role()) = 'OWNER')
-  with check (id = (select auth.uid()) or (select public.current_app_role()) = 'OWNER');
+  using (
+    (id = (select auth.uid()) and (select public.current_app_role()) is not null)
+    or (select public.current_app_role()) = 'OWNER'
+  )
+  with check (
+    (id = (select auth.uid()) and (select public.current_app_role()) is not null)
+    or (select public.current_app_role()) = 'OWNER'
+  );
 
 create policy "Staff can view members and members can view themselves"
   on public.members for select to authenticated
   using (
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
-    or profile_id = (select auth.uid())
+    or (
+      (select public.current_app_role()) is not null
+      and profile_id = (select auth.uid())
+    )
   );
 create policy "Staff can create members"
   on public.members for insert to authenticated
@@ -1128,7 +1140,9 @@ create policy "Staff and the member can view memberships"
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
     or exists (
       select 1 from public.members member
-      where member.id = memberships.member_id and member.profile_id = (select auth.uid())
+      where member.id = memberships.member_id
+        and member.profile_id = (select auth.uid())
+        and (select public.current_app_role()) is not null
     )
   );
 create policy "Staff and the member can view payments"
@@ -1137,7 +1151,9 @@ create policy "Staff and the member can view payments"
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
     or exists (
       select 1 from public.members member
-      where member.id = payments.member_id and member.profile_id = (select auth.uid())
+      where member.id = payments.member_id
+        and member.profile_id = (select auth.uid())
+        and (select public.current_app_role()) is not null
     )
   );
 create policy "Staff and the member can view attendance"
@@ -1146,7 +1162,9 @@ create policy "Staff and the member can view attendance"
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
     or exists (
       select 1 from public.members member
-      where member.id = attendance.member_id and member.profile_id = (select auth.uid())
+      where member.id = attendance.member_id
+        and member.profile_id = (select auth.uid())
+        and (select public.current_app_role()) is not null
     )
   );
 create policy "Staff can record attendance"
@@ -1171,7 +1189,10 @@ create policy "Trainers are visible to staff and their own profile"
   on public.trainers for select to authenticated
   using (
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST', 'TRAINER')
-    or profile_id = (select auth.uid())
+    or (
+      (select public.current_app_role()) is not null
+      and profile_id = (select auth.uid())
+    )
     or (select public.is_assigned_trainer(id))
   );
 create policy "Staff can manage trainers"
@@ -1183,13 +1204,21 @@ create policy "Staff, trainers and assigned members can view assignments"
   on public.trainer_assignments for select to authenticated
   using (
     (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
-    or exists (
-      select 1 from public.trainers trainer
-      where trainer.id = trainer_assignments.trainer_id and trainer.profile_id = (select auth.uid())
+    or (
+      (select public.current_app_role()) is not null
+      and exists (
+        select 1 from public.trainers trainer
+        where trainer.id = trainer_assignments.trainer_id
+          and trainer.profile_id = (select auth.uid())
+      )
     )
-    or exists (
-      select 1 from public.members member
-      where member.id = trainer_assignments.member_id and member.profile_id = (select auth.uid())
+    or (
+      (select public.current_app_role()) is not null
+      and exists (
+        select 1 from public.members member
+        where member.id = trainer_assignments.member_id
+          and member.profile_id = (select auth.uid())
+      )
     )
   );
 create policy "Staff can create trainer assignments"
@@ -1230,10 +1259,17 @@ create policy "Staff can manage enquiries"
 create policy "Users can view their notifications"
   on public.notifications for select to authenticated
   using (
-    profile_id = (select auth.uid())
-    or exists (
-      select 1 from public.members member
-      where member.id = notifications.member_id and member.profile_id = (select auth.uid())
+    (
+      (select public.current_app_role()) is not null
+      and profile_id = (select auth.uid())
+    )
+    or (
+      (select public.current_app_role()) is not null
+      and exists (
+        select 1 from public.members member
+        where member.id = notifications.member_id
+          and member.profile_id = (select auth.uid())
+      )
     )
     or (select public.current_app_role()) in ('OWNER', 'RECEPTIONIST')
   );
@@ -1248,18 +1284,32 @@ create policy "Staff can create notifications"
 create policy "Users can mark their notifications as read"
   on public.notifications for update to authenticated
   using (
-    profile_id = (select auth.uid())
-    or exists (
-      select 1 from public.members member
-      where member.id = notifications.member_id and member.profile_id = (select auth.uid())
+    (
+      (select public.current_app_role()) is not null
+      and profile_id = (select auth.uid())
+    )
+    or (
+      (select public.current_app_role()) is not null
+      and exists (
+        select 1 from public.members member
+        where member.id = notifications.member_id
+          and member.profile_id = (select auth.uid())
+      )
     )
   )
   with check (
     (
-      profile_id = (select auth.uid())
-      or exists (
-        select 1 from public.members member
-        where member.id = notifications.member_id and member.profile_id = (select auth.uid())
+      (
+        (select public.current_app_role()) is not null
+        and profile_id = (select auth.uid())
+      )
+      or (
+        (select public.current_app_role()) is not null
+        and exists (
+          select 1 from public.members member
+          where member.id = notifications.member_id
+            and member.profile_id = (select auth.uid())
+        )
       )
     )
     and status = 'READ'

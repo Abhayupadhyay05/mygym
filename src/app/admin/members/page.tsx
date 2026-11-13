@@ -13,6 +13,8 @@ import {
 import { requireRole } from '@/lib/auth/authorization'
 import { memberSearchParamsSchema, memberSearchResultSchema } from '@/lib/validations/member'
 
+export const instant = false
+
 const pageSize = 25
 const dateFormatter = new Intl.DateTimeFormat('en-IN', {
   dateStyle: 'medium',

@@ -3,6 +3,7 @@ import { requireRole } from '@/lib/auth/authorization'
 import { monthlyReportRowSchema, reportPeriodSchema } from '@/lib/validations/report'
 
 export const metadata: Metadata = { title: 'Reports' }
+export const instant = false
 
 const currency = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })
 const monthFormatter = new Intl.DateTimeFormat('en-IN', { month: 'short', year: '2-digit', timeZone: 'UTC' })

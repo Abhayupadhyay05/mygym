@@ -6,6 +6,7 @@ import { requireRole } from '@/lib/auth/authorization'
 import { membershipPlanSchema } from '@/lib/validations/membership'
 
 export const metadata: Metadata = { title: 'Edit Membership Plan' }
+export const instant = false
 
 export default async function EditMembershipPlanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

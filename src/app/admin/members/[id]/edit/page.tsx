@@ -7,6 +7,7 @@ import { requireRole } from '@/lib/auth/authorization'
 import { memberDetailsSchema } from '@/lib/validations/member'
 
 export const metadata: Metadata = { title: 'Member Details' }
+export const instant = false
 
 export default async function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

@@ -7,6 +7,15 @@ import { createClient } from '@/lib/supabase/server'
 export const appRoleSchema = z.enum(['OWNER', 'RECEPTIONIST', 'TRAINER', 'MEMBER'])
 export type AppRole = z.infer<typeof appRoleSchema>
 
+export function getActiveAppRole(profile: { role: unknown; is_active: boolean } | null) {
+  if (!profile || profile.is_active !== true) {
+    return null
+  }
+
+  const role = appRoleSchema.safeParse(profile.role)
+  return role.success ? role.data : null
+}
+
 export async function requireRole(allowedRoles: readonly AppRole[]) {
   await connection()
 
@@ -22,17 +31,17 @@ export async function requireRole(allowedRoles: readonly AppRole[]) {
 
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, full_name, role')
+    .select('id, full_name, role, is_active')
     .eq('id', user.id)
     .single()
 
-  const role = appRoleSchema.safeParse(profile?.role)
-  if (profileError || !profile || !role.success) {
+  const role = getActiveAppRole(profile)
+  if (profileError || !profile || !role) {
     redirect('/login?error=profile')
   }
-  if (!allowedRoles.includes(role.data)) {
-    redirect(role.data === 'MEMBER' ? '/member' : role.data === 'TRAINER' ? '/trainer' : '/admin')
+  if (!allowedRoles.includes(role)) {
+    redirect(role === 'MEMBER' ? '/member' : role === 'TRAINER' ? '/trainer' : '/admin')
   }
 
-  return { supabase, user, profile, role: role.data }
+  return { supabase, user, profile, role }
 }

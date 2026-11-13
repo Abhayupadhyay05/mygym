@@ -6,6 +6,7 @@ import { trainerSchema } from '@/lib/validations/trainer'
 import { TrainerForm } from '../../trainer-form'
 
 export const metadata: Metadata = { title: 'Edit Trainer' }
+export const instant = false
 
 export default async function EditTrainerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

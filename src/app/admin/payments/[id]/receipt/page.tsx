@@ -5,6 +5,7 @@ import { paymentReceiptSchema } from '@/lib/validations/payment'
 import { PaymentReceipt } from '@/components/shared/payment-receipt'
 
 export const metadata: Metadata = { title: 'Payment Receipt' }
+export const instant = false
 
 export default async function PaymentReceiptPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

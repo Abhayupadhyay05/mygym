@@ -10,6 +10,7 @@ import { requireRole } from '@/lib/auth/authorization'
 import { ProfileSettingsForm } from './profile-form'
 
 export const metadata: Metadata = { title: 'Settings' }
+export const instant = false
 
 function ConfigurationStatus({ label, configured, detail }: { label: string; configured: boolean; detail: string }) {
   return (

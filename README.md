@@ -41,7 +41,7 @@ The member portal can create Razorpay orders server-side, verify checkout signat
 
 Set `NEXT_PUBLIC_RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, and `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. Configure the Razorpay webhook URL as `https://<your-app-host>/api/webhooks/razorpay` and subscribe to `payment.captured`. Do not enable online payments until the migration is applied and the webhook is configured in a test/staging project. When these variables are missing, the member portal shows that online payment is unavailable; manual staff payments remain available.
 
-Resend and WhatsApp credentials are present in the environment template, but those delivery integrations are not implemented. Email/password, Google, and phone authentication depend on Supabase Auth provider configuration; they have not been live-tested because no Supabase project credentials are configured.
+Resend and WhatsApp credentials are present in the environment template, but those delivery integrations are not implemented. Email/password, Google, and phone authentication depend on Supabase Auth provider configuration; authentication and database behavior have not yet been live-tested against a Supabase project.
 
 ## Validation
 
